@@ -3,7 +3,6 @@ package main.java.file;
 import java.util.List;
 
 public class Main {
-
     public static void main(String[] args) {
 
         TxnDao dao = new TxnDao();
@@ -18,5 +17,4 @@ public class Main {
         else
             System.out.println("No Records Found!");
     }
-
 }

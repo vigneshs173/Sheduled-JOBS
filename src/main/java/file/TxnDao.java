@@ -10,9 +10,12 @@ import java.util.Properties;
 
 public class TxnDao {
 
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/mobiversa?";
+//    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/mobiversa?";
+//    private static final String USERNAME = "root";
+//    private static final String PASSWORD = "Mobiversa@12345";
+    private static final String JDBC_URL = "jdbc:mysql://192.168.11.210:3306/mobiversa?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8";
     private static final String USERNAME = "root";
-    private static final String PASSWORD = "Mobiversa@12345";
+    private static final String PASSWORD = "Mobi7548";
     private static final Properties queries = loadQueries();
 
     private static Properties loadQueries() {
