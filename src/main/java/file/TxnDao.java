@@ -1,5 +1,4 @@
 package main.java.file;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
@@ -7,12 +6,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class TxnDao {
 
-//    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/mobiversa?";
-//    private static final String USERNAME = "root";
-//    private static final String PASSWORD = "Mobiversa@12345";
+    private static final java.util.logging.Logger logger = Logger.getLogger(TxnDao.class.getName());
+
     private static final String JDBC_URL = "jdbc:mysql://192.168.11.210:3306/mobiversa?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "Mobi7548";
@@ -37,8 +36,8 @@ public class TxnDao {
             LocalDate currentDate = LocalDate.now();
             LocalDate thirtyDaysAgo = currentDate.minusDays(31);
 
-            System.out.println("current date: " + currentDate);
-            System.out.println("thirtyDaysAgo: " + thirtyDaysAgo);
+            System.out.println("Current date  : " + currentDate);
+            System.out.println("ThirtyDaysAgo : " + thirtyDaysAgo);
 
             statement.setDate(1, Date.valueOf(thirtyDaysAgo));
             statement.setDate(2, Date.valueOf(currentDate));
@@ -49,6 +48,7 @@ public class TxnDao {
                     txnResponse.setId(resultSet.getLong("ID"));
                     Date sqlDate = resultSet.getDate("TIME_STAMP");
                     txnResponse.setTimeStamp(sqlDate.toLocalDate());
+                    txnResponse.setStatus(resultSet.getString("STATUS"));
 
                     txnList.add(txnResponse);
                 }
@@ -59,7 +59,7 @@ public class TxnDao {
         return txnList;
     }
 
-    public void updateTransactionStatus(TxnResponse txn) {
+    public void updateTransactionStatus(TxnResponse txn, LocalDate currDate,LocalDate exDate) {
         try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
              PreparedStatement statement = connection.prepareStatement(queries.getProperty("updateTxnStatus"))) {
 
@@ -69,7 +69,7 @@ public class TxnDao {
             int rowsUpdated = statement.executeUpdate();
 
             if (rowsUpdated > 0) {
-                System.out.println("Transaction status updated for ID: " + txn.getId());
+                logger.info("Transaction status updated --> ID : " +txn.getId() +" Txn Date : "+ txn.getTimeStamp() + " Currrent Date : "+currDate +" Expired Date : "+exDate);
             }
         } catch (SQLException e) {
             e.printStackTrace();
