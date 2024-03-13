@@ -21,4 +21,3 @@ public class Main {
            logger.info("No Records Found!");
     }
 }
-
