@@ -1,5 +1,6 @@
 package main.java.file;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -11,13 +12,12 @@ public class Main {
         TxnDao dao = new TxnDao();
         List<TxnResponse> txnList = dao.getLastThirtyDaysTxn();
 
-       logger.info("List size : " + txnList.size());
+        logger.info("List size : " + txnList.size());
 
-        if(txnList != null) {
+        if(txnList.size() != 0) {
             TxnService service = new TxnService();
             service.validateTimeStamp(txnList);
-        }
-        else
+        } else
            logger.info("No Records Found!");
     }
 }
