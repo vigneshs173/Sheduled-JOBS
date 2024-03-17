@@ -1,4 +1,5 @@
 package main.java.file;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
@@ -10,16 +11,12 @@ import java.util.logging.Logger;
 
 public class TxnDao {
 
-    private static final java.util.logging.Logger logger = Logger.getLogger(TxnDao.class.getName());
+    private static final Logger logger = Logger.getLogger(TxnDao.class.getName());
+    private static final Properties properties = loadProperties();
 
-    private static final String JDBC_URL = "jdbc:mysql://192.168.11.210:3306/mobiversa?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "Mobi7548";
-    private static final Properties queries = loadQueries();
-
-    private static Properties loadQueries() {
+    private static Properties loadProperties() {
         Properties properties = new Properties();
-        try (InputStream input = TxnDao.class.getClassLoader().getResourceAsStream("queries.properties")) {
+        try (InputStream input = TxnDao.class.getClassLoader().getResourceAsStream("main/resources/application.properties")) {
             properties.load(input);
         } catch (IOException e) {
             e.printStackTrace();
@@ -30,8 +27,10 @@ public class TxnDao {
     public List<TxnResponse> getLastThirtyDaysTxn() {
         List<TxnResponse> txnList = new ArrayList<>();
 
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement(queries.getProperty("getLastThirtyDayTxn"))) {
+        try (Connection connection = DriverManager.getConnection(properties.getProperty("jdbc.url"),
+                properties.getProperty("jdbc.username"),
+                properties.getProperty("jdbc.password"));
+             PreparedStatement statement = connection.prepareStatement(properties.getProperty("sql.getLastThirtyDayTxn"))) {
 
             LocalDate currentDate = LocalDate.now();
             LocalDate thirtyDaysAgo = currentDate.minusDays(31);
@@ -59,9 +58,11 @@ public class TxnDao {
         return txnList;
     }
 
-    public void updateTransactionStatus(TxnResponse txn, LocalDate currDate,LocalDate exDate) {
-        try (Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
-             PreparedStatement statement = connection.prepareStatement(queries.getProperty("updateTxnStatus"))) {
+    public void updateTransactionStatus(TxnResponse txn, LocalDate currDate, LocalDate exDate) {
+        try (Connection connection = DriverManager.getConnection(properties.getProperty("jdbc.url"),
+                properties.getProperty("jdbc.username"),
+                properties.getProperty("jdbc.password"));
+             PreparedStatement statement = connection.prepareStatement(properties.getProperty("sql.updateTxnStatus"))) {
 
             statement.setString(1, "EE");
             statement.setLong(2, txn.getId());
@@ -76,3 +77,4 @@ public class TxnDao {
         }
     }
 }
+
